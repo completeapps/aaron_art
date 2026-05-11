@@ -192,14 +192,14 @@
     import { getDatabase, ref, onValue, set, push, remove, update } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js';
 
     const firebaseConfig = {
-      apiKey: "AIzaSyAD87l-scYsGq_eX_LLXIuYy9CIyQN2SEY",
-      authDomain: "wishlist-31551.firebaseapp.com",
-      databaseURL: "https://wishlist-31551-default-rtdb.firebaseio.com",
-      projectId: "wishlist-31551",
-      storageBucket: "wishlist-31551.firebasestorage.app",
-      messagingSenderId: "513351669307",
-      appId: "1:513351669307:web:859850b58ecd3a1c7a6e1e",
-      measurementId: "G-6NSSE0FTNN"
+      apiKey: "AIzaSyCKro17up49WahehhAxtdGCJ0ysuCbF8eg",
+      authDomain: "aaronart-78d42.firebaseapp.com",
+      databaseURL: "https://aaronart-78d42-default-rtdb.firebaseio.com", // CHECK this matches your Realtime Database URL
+      projectId: "aaronart-78d42",
+      storageBucket: "aaronart-78d42.firebasestorage.app",
+      messagingSenderId: "1022676254887",
+      appId: "1:1022676254887:web:8de175e0d928b5d0b61b82",
+      measurementId: "G-9J3MJHKBEY"
     };
 
     const app = initializeApp(firebaseConfig);
@@ -217,7 +217,7 @@
       
       // Build tag filter buttons
       const tagFilterGroup = document.getElementById('tagFilterGroup');
-      tagFilterGroup.innerHTML = '<button class="filter-btn active" onclick="filterByTag(\'all\')">All Tags</button>';
+      tagFilterGroup.innerHTML = '<button class="filter-btn active" onclick="filterByTag(\\'all\\')">All Tags</button>';
       tags.forEach(tag => {
         const btn = document.createElement('button');
         btn.className = 'filter-btn';

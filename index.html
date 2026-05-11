@@ -1,68 +1,402 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Complete – Home</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wishlist</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="page">
-    <header>
-      <img src="complete.png" alt="Logo" class="brand-logo-img">
-
-      <div class="brand-name editable" data-key="brandName"></div>
-
-      <p class="tagline editable" data-key="tagline"></p>
-
-      <div class="mode-toggle" id="modeToggle" aria-label="Toggle theme" title="Toggle theme">
-        <span class="mode-icon" id="modeIcon">●</span>
-      </div>
-
-      <button class="admin-btn" id="adminBtn">Admin</button>
-    </header>
-
-    <main>
-      <article class="product-card">
-        <div>
-          <div class="product-meta editable" data-key="card1Meta"></div>
-          <h2 class="product-name editable" data-key="card1Title"></h2>
-          <p class="product-text editable" data-key="card1Text"></p>
-        </div>
-        <a
-          class="product-link editable-link"
-          href="#"
-          target="_blank"
-          rel="noopener"
-          data-key="card1LinkText"
-          data-href-key="card1LinkHref"
-        ></a>
-      </article>
-
-      <article class="product-card">
-        <div>
-          <div class="product-meta editable" data-key="card2Meta"></div>
-          <h2 class="product-name editable" data-key="card2Title"></h2>
-          <p class="product-text editable" data-key="card2Text"></p>
-        </div>
-        <a
-          class="product-link editable-link"
-          href="#"
-          target="_blank"
-          rel="noopener"
-          data-key="card2LinkText"
-          data-href-key="card2LinkHref"
-        ></a>
-      </article>
-    </main>
-
-    <footer>
-      <span class="footer-main editable" data-key="footerMain"></span>
-      <span class="footer-made-with editable" data-key="footerSecondary"></span>
-    </footer>
+  <!-- Admin Login (top-right corner) -->
+  <div class="admin-controls">
+    <button id="adminBtn" class="admin-btn" onclick="toggleAdmin()">Admin</button>
+    <button class="edit-profile-btn admin-only" onclick="openProfileEditor()" style="display:none;">Edit Profile</button>
   </div>
 
-  <!-- Simple inline prompt driven editor -->
+  <!-- Admin Password Modal -->
+  <div class="modal" id="adminModal">
+    <div class="modal-content">
+      <h3>Admin Login</h3>
+      <input type="password" id="adminPassword" placeholder="Enter password" class="form-input">
+      <div class="form-buttons">
+        <button onclick="loginAdmin()" class="save-btn">Login</button>
+        <button onclick="closeAdminModal()" class="cancel-btn">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Profile Editor Modal -->
+  <div class="modal" id="profileModal">
+    <div class="modal-content modal-large">
+      <h3>Edit Profile</h3>
+      <input type="text" id="editName" placeholder="Your Name" class="form-input">
+      <input type="text" id="editTitle" placeholder="Title (e.g., Student · Developer)" class="form-input">
+      <input type="text" id="editLocation" placeholder="Location" class="form-input">
+      <textarea id="editBio" placeholder="About me / Bio (optional)" class="form-textarea"></textarea>
+      <input type="text" id="editAvatar" placeholder="Avatar Letter (1 character)" class="form-input" maxlength="1">
+      <input type="url" id="editWebsite" placeholder="Website URL (optional)" class="form-input">
+      <input type="text" id="editInterests" placeholder="Interests (comma separated, optional)" class="form-input">
+      <div class="form-buttons">
+        <button onclick="saveProfile()" class="save-btn">Save Profile</button>
+        <button onclick="closeProfileModal()" class="cancel-btn">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Item Modal -->
+  <div class="modal" id="editItemModal">
+    <div class="modal-content modal-large">
+      <h3>Edit Item</h3>
+      <input type="hidden" id="editItemId">
+      <input type="text" id="editItemName" placeholder="Item name" class="form-input">
+      <input type="text" id="editItemPrice" placeholder="Price (e.g., $50)" class="form-input">
+      <input type="url" id="editItemLink" placeholder="Link (optional)" class="form-input">
+      <input type="url" id="editItemImage" placeholder="Image URL (optional)" class="form-input">
+      <select id="editItemTag" class="form-select">
+        <!-- Populated dynamically from tags.js -->
+      </select>
+      <textarea id="editItemInfo" placeholder="Info / Details (optional)" class="form-textarea"></textarea>
+      
+      <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--text-primary);">
+        <input type="checkbox" id="editItemPrivate">
+        🔒 Private (Admin only)
+      </label>
+      
+      <div class="form-buttons">
+        <button onclick="saveItemEdit()" class="save-btn">Save Changes</button>
+        <button onclick="closeEditItemModal()" class="cancel-btn">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Info Modal -->
+  <div class="modal" id="infoModal">
+    <div class="modal-content">
+      <div class="info-header">
+        <h3 id="infoItemName">Item Info</h3>
+        <button class="modal-close" onclick="closeInfoModal()">×</button>
+      </div>
+      <div id="infoContent" class="info-content">
+        No info available.
+      </div>
+    </div>
+  </div>
+
+  <!-- Comments Modal -->
+  <div class="modal" id="commentsModal">
+    <div class="modal-content modal-large">
+      <div class="info-header">
+        <h3 id="commentsItemName">Comments</h3>
+        <button class="modal-close" onclick="closeCommentsModal()">×</button>
+      </div>
+      <div id="commentsContent" class="comments-list">
+        <p style="color: #666;">No comments yet.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Comment Modal -->
+  <div class="modal" id="addCommentModal">
+    <div class="modal-content">
+      <h3>Add Comment</h3>
+      <input type="hidden" id="commentItemId">
+      <input type="text" id="commentAuthor" placeholder="Your name" class="form-input">
+      <textarea id="commentText" placeholder="Write your comment..." class="form-textarea"></textarea>
+      <div class="form-buttons">
+        <button onclick="submitComment()" class="save-btn">Post Comment</button>
+        <button onclick="closeAddCommentModal()" class="cancel-btn">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Profile Section -->
+  <header class="profile-section">
+    <div class="profile-container">
+      <div class="profile-avatar">
+        <div class="avatar-circle" id="avatarCircle">U</div>
+      </div>
+      <div class="profile-info">
+        <h1 class="profile-name" id="profileName">Your Name</h1>
+        <p class="profile-title" id="profileTitle">Student · Developer</p>
+        <p class="profile-location" id="profileLocation">📍 Bettendorf, IA</p>
+        <p class="profile-bio" id="profileBio" style="display:none;"></p>
+        <div class="profile-meta" id="profileMeta" style="display:none;">
+          <a href="#" id="profileWebsite" target="_blank" class="profile-link" style="display:none;">🔗 Website</a>
+          <p class="profile-interests" id="profileInterests" style="display:none;"></p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Wishlist Section -->
+  <main class="wishlist-section">
+    <div class="section-header">
+      <h2>Wishlist</h2>
+      <button class="add-btn admin-only" onclick="toggleAddForm()" style="display:none;">+ Add Item</button>
+    </div>
+
+    <!-- Filter Controls -->
+    <div class="filter-controls">
+      <div class="filter-group">
+        <button class="filter-btn active" onclick="filterByPrice('all')">All Prices</button>
+        <button class="filter-btn" onclick="filterByPrice('under50')">Under $50</button>
+        <button class="filter-btn" onclick="filterByPrice('50to100')">$50-$100</button>
+        <button class="filter-btn" onclick="filterByPrice('over100')">Over $100</button>
+      </div>
+      <div class="filter-group" id="tagFilterGroup">
+        <!-- Populated dynamically from tags.js -->
+      </div>
+    </div>
+
+    <!-- Add Item Form -->
+    <div class="add-form" id="addForm">
+      <input type="text" id="itemName" placeholder="Item name" class="form-input">
+      <input type="text" id="itemPrice" placeholder="Price (e.g., $50)" class="form-input">
+      <input type="url" id="itemLink" placeholder="Link (optional)" class="form-input">
+      <input type="url" id="itemImage" placeholder="Image URL (optional)" class="form-input">
+      <select id="itemTag" class="form-select">
+        <!-- Populated dynamically from tags.js -->
+      </select>
+      <textarea id="itemInfo" placeholder="Info / Details (optional)" class="form-textarea"></textarea>
+      
+      <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--text-primary);">
+        <input type="checkbox" id="itemPrivate">
+        🔒 Private (Admin only)
+      </label>
+      
+      <div class="form-buttons">
+        <button onclick="addItem()" class="save-btn">Save</button>
+        <button onclick="toggleAddForm()" class="cancel-btn">Cancel</button>
+      </div>
+    </div>
+
+    <!-- Wishlist Grid -->
+    <div class="wishlist-grid" id="wishlistGrid"></div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <a href="https://www.perplexity.ai" target="_blank" class="footer-link">
+      <span class="footer-text">Built with</span>
+      <img src="perplexity.png" alt="Perplexity" class="perplexity-logo">
+      <span class="footer-brand">Perplexity</span>
+    </a>
+  </footer>
+
+  <!-- Load tags first -->
+  <script src="tags.js"></script>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
+    import { getDatabase, ref, onValue, set, push, remove, update } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAD87l-scYsGq_eX_LLXIuYy9CIyQN2SEY",
+      authDomain: "wishlist-31551.firebaseapp.com",
+      databaseURL: "https://wishlist-31551-default-rtdb.firebaseio.com",
+      projectId: "wishlist-31551",
+      storageBucket: "wishlist-31551.firebasestorage.app",
+      messagingSenderId: "513351669307",
+      appId: "1:513351669307:web:859850b58ecd3a1c7a6e1e",
+      measurementId: "G-6NSSE0FTNN"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    window.db = db;
+    window.dbRef = ref;
+    window.dbSet = set;
+    window.dbPush = push;
+    window.dbRemove = remove;
+    window.dbUpdate = update;
+
+    // Build tag filters and dropdowns from tags.js
+    window.buildTagUI = function() {
+      const tags = window.WISHLIST_TAGS || [];
+      
+      // Build tag filter buttons
+      const tagFilterGroup = document.getElementById('tagFilterGroup');
+      tagFilterGroup.innerHTML = '<button class="filter-btn active" onclick="filterByTag(\'all\')">All Tags</button>';
+      tags.forEach(tag => {
+        const btn = document.createElement('button');
+        btn.className = 'filter-btn';
+        btn.onclick = () => filterByTag(tag.name);
+        btn.textContent = tag.emoji + ' ' + tag.name;
+        tagFilterGroup.appendChild(btn);
+      });
+      
+      // Build add item tag dropdown
+      const itemTagSelect = document.getElementById('itemTag');
+      itemTagSelect.innerHTML = '<option value="">No Tag</option>';
+      tags.forEach(tag => {
+        const option = document.createElement('option');
+        option.value = tag.name;
+        option.textContent = tag.emoji + ' ' + tag.name;
+        itemTagSelect.appendChild(option);
+      });
+      
+      // Build edit item tag dropdown
+      const editItemTagSelect = document.getElementById('editItemTag');
+      editItemTagSelect.innerHTML = '<option value="">No Tag</option>';
+      tags.forEach(tag => {
+        const option = document.createElement('option');
+        option.value = tag.name;
+        option.textContent = tag.emoji + ' ' + tag.name;
+        editItemTagSelect.appendChild(option);
+      });
+    };
+
+    // Build UI when page loads
+    window.buildTagUI();
+
+    // Load profile
+    const profileRef = ref(db, 'profile');
+    onValue(profileRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        document.getElementById('profileName').textContent = data.name || 'Your Name';
+        document.getElementById('avatarCircle').textContent = data.avatar || 'U';
+        document.getElementById('profileTitle').textContent = data.title || 'Student · Developer';
+        document.getElementById('profileLocation').textContent = '📍 ' + (data.location || 'Bettendorf, IA');
+        
+        const bioEl = document.getElementById('profileBio');
+        if (data.bio) {
+          bioEl.textContent = data.bio;
+          bioEl.style.display = 'block';
+        } else {
+          bioEl.style.display = 'none';
+        }
+        
+        const websiteEl = document.getElementById('profileWebsite');
+        if (data.website) {
+          websiteEl.href = data.website;
+          websiteEl.style.display = 'inline-block';
+          document.getElementById('profileMeta').style.display = 'block';
+        } else {
+          websiteEl.style.display = 'none';
+        }
+        
+        const interestsEl = document.getElementById('profileInterests');
+        if (data.interests) {
+          interestsEl.textContent = '💡 ' + data.interests;
+          interestsEl.style.display = 'block';
+          document.getElementById('profileMeta').style.display = 'block';
+        } else {
+          interestsEl.style.display = 'none';
+        }
+      }
+    });
+
+    // Load wishlist items
+    const wishlistRef = ref(db, 'wishlist');
+    onValue(wishlistRef, (snapshot) => {
+      const grid = document.getElementById('wishlistGrid');
+      grid.innerHTML = '';
+      
+      const data = snapshot.val();
+      window.wishlistData = data || {};
+      
+      if (data) {
+        Object.keys(data).forEach(key => {
+          const item = data[key];
+          renderItem(key, item);
+        });
+      }
+    });
+
+    window.renderItem = function(id, item) {
+      const grid = document.getElementById('wishlistGrid');
+      const isAdmin = sessionStorage.getItem('isAdmin') === 'true';
+      
+      // Hide private items from non-admins
+      if (item.isPrivate && !isAdmin) {
+        return;
+      }
+      
+      const itemDiv = document.createElement('div');
+      itemDiv.className = 'wishlist-item';
+      itemDiv.dataset.id = id;
+      itemDiv.dataset.price = item.price || '';
+      itemDiv.dataset.tag = item.tag || '';
+      
+      const isChecked = item.checked || false;
+      const hasInfo = item.info && item.info.trim() !== '';
+      const hasImage = item.image && item.image.trim() !== '';
+      const hasTag = item.tag && item.tag.trim() !== '';
+      const commentCount = item.comments ? Object.keys(item.comments).length : 0;
+      
+      let html = '';
+      
+      // Image
+      if (hasImage) {
+        html += `<img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}" class="item-image" onerror="this.style.display='none'">`;
+      }
+      
+      // Private badge
+      if (item.isPrivate && isAdmin) {
+        html += '<div style="margin-bottom: 8px;"><span style="background: #6366f1; color: white; padding: 4px 10px; border-radius: 6px; font-size: 0.75em; font-weight: 600;">🔒 PRIVATE</span></div>';
+      }
+      
+      // Tags
+      if (hasTag) {
+        const tags = window.WISHLIST_TAGS || [];
+        const tagObj = tags.find(t => t.name === item.tag);
+        const emoji = tagObj ? tagObj.emoji : '';
+        html += `<div class="item-tags"><span class="item-tag">${emoji} ${escapeHtml(item.tag)}</span></div>`;
+      }
+      
+      // Header
+      html += `
+        <div class="item-header">
+          <label class="checkbox-container">
+            <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleCheck('${id}', this.checked)">
+            <span class="checkmark"></span>
+          </label>
+          <h3 class="item-name ${isChecked ? 'checked' : ''}">${escapeHtml(item.name)}</h3>
+          <button class="delete-btn admin-only" onclick="deleteItem('${id}')" style="display:${isAdmin ? 'block' : 'none'};">×</button>
+        </div>
+      `;
+      
+      // Price
+      if (item.price) {
+        html += `<p class="item-price">${escapeHtml(item.price)}</p>`;
+        
+        // Price comparison
+        if (item.priceHistory && item.priceHistory.length > 1) {
+          const original = parseFloat(item.priceHistory[0].price.replace(/[^0-9.]/g, ''));
+          const current = parseFloat(item.price.replace(/[^0-9.]/g, ''));
+          
+          if (current < original) {
+            const savings = (original - current).toFixed(2);
+            html += `<span class="price-savings">💰 $${savings} off original!</span>`;
+          } else if (current > original) {
+            const increase = (current - original).toFixed(2);
+            html += `<span class="price-increase">📈 +$${increase} from original</span>`;
+          }
+        }
+      }
+      
+      // Actions
+      html += '<div class="item-actions">';
+      if (item.link) {
+        html += `<a href="${escapeHtml(item.link)}" target="_blank" class="item-link">View</a>`;
+      }
+      if (hasInfo) {
+        html += `<a href="javascript:void(0)" onclick="openInfo('${id}')" class="item-link info-link">Info</a>`;
+      }
+      html += `<a href="javascript:void(0)" onclick="openComments('${id}')" class="item-link comment-link">Comments ${commentCount > 0 ? '(' + commentCount + ')' : ''}</a>`;
+      html += `<a href="javascript:void(0)" onclick="openAddComment('${id}')" class="item-link add-comment-link">Add Comment</a>`;
+      if (isAdmin) {
+        html += `<a href="javascript:void(0)" onclick="openEditItem('${id}')" class="item-link edit-link admin-only">Edit</a>`;
+      }
+      html += '</div>';
+      
+      itemDiv.innerHTML = html;
+      grid.appendChild(itemDiv);
+    };
+  </script>
+
   <script src="script.js"></script>
 </body>
 </html>

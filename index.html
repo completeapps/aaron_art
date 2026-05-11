@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Wishlist</title>
+  <title>Artwork</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -15,7 +15,7 @@
     </div>
   </nav>
 
-  <!-- HOME SECTION: all existing content -->
+  <!-- HOME SECTION: profile + artwork list -->
   <div id="homeSection">
     <!-- Admin Login (top-right corner) -->
     <div class="admin-controls">
@@ -40,7 +40,7 @@
       <div class="modal-content modal-large">
         <h3>Edit Profile</h3>
         <input type="text" id="editName" placeholder="Your Name" class="form-input">
-        <input type="text" id="editTitle" placeholder="Title (e.g., Student · Developer)" class="form-input">
+        <input type="text" id="editTitle" placeholder="Title (e.g., Artist · Illustrator)" class="form-input">
         <input type="text" id="editLocation" placeholder="Location" class="form-input">
         <textarea id="editBio" placeholder="About me / Bio (optional)" class="form-textarea"></textarea>
         <input type="text" id="editAvatar" placeholder="Avatar Letter (1 character)" class="form-input" maxlength="1">
@@ -53,21 +53,21 @@
       </div>
     </div>
 
-    <!-- Edit Item Modal -->
+    <!-- Edit Artwork Modal -->
     <div class="modal" id="editItemModal">
       <div class="modal-content modal-large">
-        <h3>Edit Item</h3>
+        <h3>Edit Artwork</h3>
         <input type="hidden" id="editItemId">
-        <input type="text" id="editItemName" placeholder="Item name" class="form-input">
-        <input type="text" id="editItemPrice" placeholder="Price (e.g., $50)" class="form-input">
-        <input type="url" id="editItemLink" placeholder="Link (optional)" class="form-input">
-        <input type="url" id="editItemImage" placeholder="Image URL (optional)" class="form-input">
+        <input type="text" id="editItemName" placeholder="Title" class="form-input">
+        <input type="text" id="editItemPrice" placeholder="Details (e.g., 18\" x 24\", Oil on canvas)" class="form-input">
+        <input type="url" id="editItemLink" placeholder="External link (optional)" class="form-input">
+        <input type="url" id="editItemImage" placeholder="Image URL" class="form-input">
         <select id="editItemTag" class="form-select">
           <!-- Populated dynamically from tags.js -->
         </select>
-        <textarea id="editItemInfo" placeholder="Info / Details (optional)" class="form-textarea"></textarea>
+        <textarea id="editItemInfo" placeholder="Notes (optional)" class="form-textarea"></textarea>
         
-        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--text-primary);">
+        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: #bbb;">
           <input type="checkbox" id="editItemPrivate">
           🔒 Private (Admin only)
         </label>
@@ -83,7 +83,7 @@
     <div class="modal" id="infoModal">
       <div class="modal-content">
         <div class="info-header">
-          <h3 id="infoItemName">Item Info</h3>
+          <h3 id="infoItemName">Artwork Info</h3>
           <button class="modal-close" onclick="closeInfoModal()">×</button>
         </div>
         <div id="infoContent" class="info-content">
@@ -127,7 +127,7 @@
         </div>
         <div class="profile-info">
           <h1 class="profile-name" id="profileName">Your Name</h1>
-          <p class="profile-title" id="profileTitle">Student · Developer</p>
+          <p class="profile-title" id="profileTitle">Artist · Illustrator</p>
           <p class="profile-location" id="profileLocation">📍 Bettendorf, IA</p>
           <p class="profile-bio" id="profileBio" style="display:none;"></p>
           <div class="profile-meta" id="profileMeta" style="display:none;">
@@ -138,38 +138,38 @@
       </div>
     </header>
 
-    <!-- Wishlist Section -->
+    <!-- Artwork Section (was Wishlist) -->
     <main class="wishlist-section">
       <div class="section-header">
-        <h2>Wishlist</h2>
-        <button class="add-btn admin-only" onclick="toggleAddForm()" style="display:none;">+ Add Item</button>
+        <h2>Artwork</h2>
+        <button class="add-btn admin-only" onclick="toggleAddForm()" style="display:none;">+ Add Piece</button>
       </div>
 
       <!-- Filter Controls -->
       <div class="filter-controls">
         <div class="filter-group">
-          <button class="filter-btn active" onclick="filterByPrice('all')">All Prices</button>
-          <button class="filter-btn" onclick="filterByPrice('under50')">Under $50</button>
-          <button class="filter-btn" onclick="filterByPrice('50to100')">$50-$100</button>
-          <button class="filter-btn" onclick="filterByPrice('over100')">Over $100</button>
+          <button class="filter-btn active" onclick="filterByPrice('all')">All</button>
+          <button class="filter-btn" onclick="filterByPrice('under50')">Smaller Works</button>
+          <button class="filter-btn" onclick="filterByPrice('50to100')">Medium Works</button>
+          <button class="filter-btn" onclick="filterByPrice('over100')">Larger Works</button>
         </div>
         <div class="filter-group" id="tagFilterGroup">
           <!-- Populated dynamically from tags.js -->
         </div>
       </div>
 
-      <!-- Add Item Form -->
+      <!-- Add Artwork Form -->
       <div class="add-form" id="addForm">
-        <input type="text" id="itemName" placeholder="Item name" class="form-input">
-        <input type="text" id="itemPrice" placeholder="Price (e.g., $50)" class="form-input">
-        <input type="url" id="itemLink" placeholder="Link (optional)" class="form-input">
-        <input type="url" id="itemImage" placeholder="Image URL (optional)" class="form-input">
+        <input type="text" id="itemName" placeholder="Title" class="form-input">
+        <input type="text" id="itemPrice" placeholder="Details (e.g., 18\" x 24\", Oil on canvas)" class="form-input">
+        <input type="url" id="itemLink" placeholder="External link (optional)" class="form-input">
+        <input type="url" id="itemImage" placeholder="Image URL" class="form-input">
         <select id="itemTag" class="form-select">
           <!-- Populated dynamically from tags.js -->
         </select>
-        <textarea id="itemInfo" placeholder="Info / Details (optional)" class="form-textarea"></textarea>
+        <textarea id="itemInfo" placeholder="Notes (optional)" class="form-textarea"></textarea>
         
-        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--text-primary);">
+        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: #bbb;">
           <input type="checkbox" id="itemPrivate">
           🔒 Private (Admin only)
         </label>
@@ -180,8 +180,8 @@
         </div>
       </div>
 
-      <!-- Wishlist Grid -->
-      <div class="wishlist-grid" id="wishlistGrid"></div>
+      <!-- Artwork Grid -->
+      <div class="wishlist-grid" id="artworkGrid"></div>
     </main>
 
     <!-- Footer -->
@@ -194,27 +194,47 @@
     </footer>
   </div><!-- /homeSection -->
 
-  <!-- PORTFOLIO SECTION -->
+  <!-- PORTFOLIO SECTION: gallery display like Jeff Hein -->
   <main class="portfolio-section" id="portfolioSection" style="display:none;">
     <div class="section-header">
       <h2>Portfolio</h2>
     </div>
     <div class="portfolio-grid">
-      <div class="portfolio-item">
+      <figure class="portfolio-item">
         <div class="portfolio-image-placeholder">Artwork 1</div>
-      </div>
-      <div class="portfolio-item">
+        <figcaption class="portfolio-caption">
+          <span class="portfolio-title">Title Placeholder</span>
+          <span class="portfolio-meta">Oil on canvas, 16" x 20"</span>
+        </figcaption>
+      </figure>
+      <figure class="portfolio-item">
         <div class="portfolio-image-placeholder">Artwork 2</div>
-      </div>
-      <div class="portfolio-item">
+        <figcaption class="portfolio-caption">
+          <span class="portfolio-title">Title Placeholder</span>
+          <span class="portfolio-meta">Medium, Size</span>
+        </figcaption>
+      </figure>
+      <figure class="portfolio-item">
         <div class="portfolio-image-placeholder">Artwork 3</div>
-      </div>
-      <div class="portfolio-item">
+        <figcaption class="portfolio-caption">
+          <span class="portfolio-title">Title Placeholder</span>
+          <span class="portfolio-meta">Medium, Size</span>
+        </figcaption>
+      </figure>
+      <figure class="portfolio-item">
         <div class="portfolio-image-placeholder">Artwork 4</div>
-      </div>
-      <div class="portfolio-item">
+        <figcaption class="portfolio-caption">
+          <span class="portfolio-title">Title Placeholder</span>
+          <span class="portfolio-meta">Medium, Size</span>
+        </figcaption>
+      </figure>
+      <figure class="portfolio-item">
         <div class="portfolio-image-placeholder">Artwork 5</div>
-      </div>
+        <figcaption class="portfolio-caption">
+          <span class="portfolio-title">Title Placeholder</span>
+          <span class="portfolio-meta">Medium, Size</span>
+        </figcaption>
+      </figure>
     </div>
   </main>
 
@@ -229,7 +249,7 @@
     const firebaseConfig = {
       apiKey: "AIzaSyCKro17up49WahehhAxtdGCJ0ysuCbF8eg",
       authDomain: "aaronart-78d42.firebaseapp.com",
-      databaseURL: "https://aaronart-78d42-default-rtdb.firebaseio.com", // make sure this matches your DB URL
+      databaseURL: "https://aaronart-78d42-default-rtdb.firebaseio.com",
       projectId: "aaronart-78d42",
       storageBucket: "aaronart-78d42.firebasestorage.app",
       messagingSenderId: "1022676254887",
@@ -294,7 +314,7 @@
       if (data) {
         document.getElementById('profileName').textContent = data.name || 'Your Name';
         document.getElementById('avatarCircle').textContent = data.avatar || 'U';
-        document.getElementById('profileTitle').textContent = data.title || 'Student · Developer';
+        document.getElementById('profileTitle').textContent = data.title || 'Artist · Illustrator';
         document.getElementById('profileLocation').textContent = '📍 ' + (data.location || 'Bettendorf, IA');
         
         const bioEl = document.getElementById('profileBio');
@@ -325,14 +345,14 @@
       }
     });
 
-    // Load wishlist items
-    const wishlistRef = ref(db, 'wishlist');
-    onValue(wishlistRef, (snapshot) => {
-      const grid = document.getElementById('wishlistGrid');
+    // Load artworks (used to be wishlist)
+    const artworkRef = ref(db, 'artwork');
+    onValue(artworkRef, (snapshot) => {
+      const grid = document.getElementById('artworkGrid');
       grid.innerHTML = '';
       
       const data = snapshot.val();
-      window.wishlistData = data || {};
+      window.wishlistData = data || {}; // keep this name to avoid refactoring everything
       
       if (data) {
         Object.keys(data).forEach(key => {
@@ -343,7 +363,7 @@
     });
 
     window.renderItem = function(id, item) {
-      const grid = document.getElementById('wishlistGrid');
+      const grid = document.getElementById('artworkGrid');
       const isAdmin = sessionStorage.getItem('isAdmin') === 'true';
       
       if (item.isPrivate && !isAdmin) {
@@ -381,10 +401,6 @@
       
       html += `
         <div class="item-header">
-          <label class="checkbox-container">
-            <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleCheck('${id}', this.checked)">
-            <span class="checkmark"></span>
-          </label>
           <h3 class="item-name ${isChecked ? 'checked' : ''}">${escapeHtml(item.name)}</h3>
           <button class="delete-btn admin-only" onclick="deleteItem('${id}')" style="display:${isAdmin ? 'block' : 'none'};">×</button>
         </div>
@@ -392,19 +408,6 @@
       
       if (item.price) {
         html += `<p class="item-price">${escapeHtml(item.price)}</p>`;
-        
-        if (item.priceHistory && item.priceHistory.length > 1) {
-          const original = parseFloat(item.priceHistory[0].price.replace(/[^0-9.]/g, ''));
-          const current = parseFloat(item.price.replace(/[^0-9.]/g, ''));
-          
-          if (current < original) {
-            const savings = (original - current).toFixed(2);
-            html += `<span class="price-savings">💰 $${savings} off original!</span>`;
-          } else if (current > original) {
-            const increase = (current - original).toFixed(2);
-            html += `<span class="price-increase">📈 +$${increase} from original</span>`;
-          }
-        }
       }
       
       html += '<div class="item-actions">';

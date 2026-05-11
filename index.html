@@ -1,1 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Complete – Home</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="page">
+    <header>
+      <img src="complete.png" alt="Logo" class="brand-logo-img">
 
+      <div class="brand-name editable" data-key="brandName"></div>
+
+      <p class="tagline editable" data-key="tagline"></p>
+
+      <div class="mode-toggle" id="modeToggle" aria-label="Toggle theme" title="Toggle theme">
+        <span class="mode-icon" id="modeIcon">●</span>
+      </div>
+
+      <button class="admin-btn" id="adminBtn">Admin</button>
+    </header>
+
+    <main>
+      <article class="product-card">
+        <div>
+          <div class="product-meta editable" data-key="card1Meta"></div>
+          <h2 class="product-name editable" data-key="card1Title"></h2>
+          <p class="product-text editable" data-key="card1Text"></p>
+        </div>
+        <a
+          class="product-link editable-link"
+          href="#"
+          target="_blank"
+          rel="noopener"
+          data-key="card1LinkText"
+          data-href-key="card1LinkHref"
+        ></a>
+      </article>
+
+      <article class="product-card">
+        <div>
+          <div class="product-meta editable" data-key="card2Meta"></div>
+          <h2 class="product-name editable" data-key="card2Title"></h2>
+          <p class="product-text editable" data-key="card2Text"></p>
+        </div>
+        <a
+          class="product-link editable-link"
+          href="#"
+          target="_blank"
+          rel="noopener"
+          data-key="card2LinkText"
+          data-href-key="card2LinkHref"
+        ></a>
+      </article>
+    </main>
+
+    <footer>
+      <span class="footer-main editable" data-key="footerMain"></span>
+      <span class="footer-made-with editable" data-key="footerSecondary"></span>
+    </footer>
+  </div>
+
+  <!-- Simple inline prompt driven editor -->
+  <script src="script.js"></script>
+</body>
+</html>

@@ -47,14 +47,6 @@ function loginAdmin() {
     closeAdminModal();
     updateAdminUI();
     alert('Admin mode enabled');
-    if (window.db) {
-      const wishlistRef = window.dbRef(window.db, 'wishlist');
-      window.dbOnValue = window.dbOnValue || ((ref, callback) => {
-        import('https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js').then(module => {
-          module.onValue(ref, callback);
-        });
-      });
-    }
   } else {
     alert('Incorrect password');
   }
@@ -141,7 +133,7 @@ function closeProfileModal() {
   document.getElementById('profileModal').classList.remove('active');
 }
 
-// Edit item
+// Edit artwork
 function openEditItem(id) {
   const isAdmin = sessionStorage.getItem('isAdmin') === 'true';
   if (!isAdmin) {
@@ -179,7 +171,7 @@ function saveItemEdit() {
   const info = document.getElementById('editItemInfo').value.trim();
   
   if (!name) {
-    alert('Please enter an item name');
+    alert('Please enter a title');
     return;
   }
   
@@ -197,40 +189,19 @@ function saveItemEdit() {
     updateData.isPrivate = privateCheckbox.checked;
   }
   
-  const oldPrice = item.price || '';
-  if (oldPrice !== newPrice && newPrice) {
-    const priceHistory = item.priceHistory || [];
-    
-    if (priceHistory.length === 0 && oldPrice) {
-      priceHistory.push({
-        price: oldPrice,
-        date: Date.now(),
-        note: 'Original price'
-      });
-    }
-    
-    priceHistory.push({
-      price: newPrice,
-      date: Date.now(),
-      note: 'Price updated'
-    });
-    
-    updateData.priceHistory = priceHistory;
-  } else {
-    updateData.priceHistory = item.priceHistory || [];
-  }
+  updateData.priceHistory = item.priceHistory || [];
   
-  window.dbUpdate(window.dbRef(window.db, 'wishlist/' + id), updateData);
+  window.dbUpdate(window.dbRef(window.db, 'artwork/' + id), updateData);
   
   closeEditItemModal();
-  alert('Item updated!');
+  alert('Artwork updated!');
 }
 
 function closeEditItemModal() {
   document.getElementById('editItemModal').classList.remove('active');
 }
 
-// Add/Delete items
+// Add/Delete artwork
 function toggleAddForm() {
   const form = document.getElementById('addForm');
   form.classList.toggle('active');
@@ -265,11 +236,11 @@ function addItem() {
   const info = document.getElementById('itemInfo').value.trim();
   
   if (!name) {
-    alert('Please enter an item name');
+    alert('Please enter a title');
     return;
   }
   
-  const newItemRef = window.dbPush(window.dbRef(window.db, 'wishlist'));
+  const newItemRef = window.dbPush(window.dbRef(window.db, 'artwork'));
   
   const itemData = {
     name: name,
@@ -287,13 +258,7 @@ function addItem() {
     itemData.isPrivate = privateCheckbox.checked;
   }
   
-  if (price) {
-    itemData.priceHistory = [{
-      price: price,
-      date: Date.now(),
-      note: 'Original price'
-    }];
-  }
+  itemData.priceHistory = [];
   
   window.dbSet(newItemRef, itemData);
   
@@ -307,37 +272,8 @@ function deleteItem(id) {
     return;
   }
   
-  if (confirm('Remove this item from wishlist?')) {
-    window.dbRemove(window.dbRef(window.db, 'wishlist/' + id));
-  }
-}
-
-// Toggle check with purchase confirmation
-function toggleCheck(id, checked) {
-  if (checked) {
-    const confirmed = confirm('Mark this item as purchased?');
-    
-    if (confirmed) {
-      window.dbUpdate(window.dbRef(window.db, 'wishlist/' + id), {
-        checked: true,
-        claimedBy: 'Guest',
-        claimedDate: Date.now()
-      });
-    } else {
-      event.target.checked = false;
-    }
-  } else {
-    const isAdmin = sessionStorage.getItem('isAdmin') === 'true';
-    if (isAdmin) {
-      window.dbUpdate(window.dbRef(window.db, 'wishlist/' + id), {
-        checked: false,
-        claimedBy: null,
-        claimedDate: null
-      });
-    } else {
-      alert('Only admin can unclaim items');
-      event.target.checked = true;
-    }
+  if (confirm('Remove this artwork?')) {
+    window.dbRemove(window.dbRef(window.db, 'artwork/' + id));
   }
 }
 
@@ -349,40 +285,6 @@ function openInfo(id) {
   document.getElementById('infoItemName').textContent = item.name;
   
   let infoHTML = item.info ? `<p>${escapeHtml(item.info)}</p>` : '<p>No info available.</p>';
-  
-  if (item.priceHistory && item.priceHistory.length > 0) {
-    infoHTML += '<div class="price-history">';
-    infoHTML += '<h4 style="color: var(--accent); margin: 15px 0 10px 0;">💰 Price History</h4>';
-    
-    item.priceHistory.forEach((entry, index) => {
-      const isLatest = index === item.priceHistory.length - 1;
-      const date = new Date(entry.date).toLocaleDateString();
-      
-      infoHTML += `<div class="price-entry ${isLatest ? 'latest' : ''}">`;
-      infoHTML += `<span class="price-value">${escapeHtml(entry.price)}</span>`;
-      infoHTML += `<span class="price-date">${date}</span>`;
-      
-      if (index > 0) {
-        const prevPrice = parseFloat(item.priceHistory[index - 1].price.replace(/[^0-9.]/g, ''));
-        const currPrice = parseFloat(entry.price.replace(/[^0-9.]/g, ''));
-        const diff = (currPrice - prevPrice).toFixed(2);
-        
-        if (diff < 0) {
-          infoHTML += `<span class="price-change down">-$${Math.abs(diff)}</span>`;
-        } else if (diff > 0) {
-          infoHTML += `<span class="price-change up">+$${diff}</span>`;
-        }
-      }
-      
-      if (entry.note) {
-        infoHTML += `<span class="price-note">${escapeHtml(entry.note)}</span>`;
-      }
-      
-      infoHTML += '</div>';
-    });
-    
-    infoHTML += '</div>';
-  }
   
   document.getElementById('infoContent').innerHTML = infoHTML;
   document.getElementById('infoModal').classList.add('active');
@@ -437,7 +339,7 @@ function deleteComment(itemId, commentId) {
   }
   
   if (confirm('Delete this comment?')) {
-    window.dbRemove(window.dbRef(window.db, 'wishlist/' + itemId + '/comments/' + commentId));
+    window.dbRemove(window.dbRef(window.db, 'artwork/' + itemId + '/comments/' + commentId));
     setTimeout(() => openComments(itemId), 200);
   }
 }
@@ -464,7 +366,7 @@ function submitComment() {
     return;
   }
   
-  const commentRef = window.dbPush(window.dbRef(window.db, 'wishlist/' + itemId + '/comments'));
+  const commentRef = window.dbPush(window.dbRef(window.db, 'artwork/' + itemId + '/comments'));
   window.dbSet(commentRef, {
     author: author,
     text: text,
@@ -483,7 +385,7 @@ function filterByPrice(filter) {
   currentPriceFilter = filter;
   
   document.querySelectorAll('.filter-group .filter-btn').forEach(btn => {
-    if (btn.textContent.includes('$') || btn.textContent.includes('All Prices')) {
+    if (btn.textContent.includes('All') || btn.textContent.includes('Works')) {
       btn.classList.remove('active');
     }
   });
@@ -508,15 +410,6 @@ function applyFilters() {
   
   items.forEach(item => {
     let showItem = true;
-    
-    if (currentPriceFilter !== 'all') {
-      const priceText = item.dataset.price;
-      const priceNum = parseFloat(priceText.replace(/[^0-9.]/g, ''));
-      
-      if (currentPriceFilter === 'under50' && priceNum >= 50) showItem = false;
-      if (currentPriceFilter === '50to100' && (priceNum < 50 || priceNum > 100)) showItem = false;
-      if (currentPriceFilter === 'over100' && priceNum <= 100) showItem = false;
-    }
     
     if (currentTagFilter !== 'all') {
       const tag = item.dataset.tag;

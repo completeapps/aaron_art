@@ -140,7 +140,6 @@ function openEditItem(id) {
   document.getElementById('editItemTag').value = item.tag || '';
   document.getElementById('editItemInfo').value = item.info || '';
   
-  // Add private checkbox if it exists in the form
   const privateCheckbox = document.getElementById('editItemPrivate');
   if (privateCheckbox) {
     privateCheckbox.checked = item.isPrivate || false;
@@ -173,18 +172,15 @@ function saveItemEdit() {
     info: info
   };
   
-  // Handle private checkbox if it exists
   const privateCheckbox = document.getElementById('editItemPrivate');
   if (privateCheckbox) {
     updateData.isPrivate = privateCheckbox.checked;
   }
   
-  // Handle price tracking
   const oldPrice = item.price || '';
   if (oldPrice !== newPrice && newPrice) {
     const priceHistory = item.priceHistory || [];
     
-    // Add original price if this is the first change
     if (priceHistory.length === 0 && oldPrice) {
       priceHistory.push({
         price: oldPrice,
@@ -193,7 +189,6 @@ function saveItemEdit() {
       });
     }
     
-    // Add new price
     priceHistory.push({
       price: newPrice,
       date: Date.now(),
@@ -228,7 +223,6 @@ function toggleAddForm() {
     document.getElementById('itemTag').value = '';
     document.getElementById('itemInfo').value = '';
     
-    // Clear private checkbox if it exists
     const privateCheckbox = document.getElementById('itemPrivate');
     if (privateCheckbox) {
       privateCheckbox.checked = false;
@@ -268,13 +262,11 @@ function addItem() {
     comments: {}
   };
   
-  // Handle private checkbox if it exists
   const privateCheckbox = document.getElementById('itemPrivate');
   if (privateCheckbox) {
     itemData.isPrivate = privateCheckbox.checked;
   }
   
-  // Initialize price history if price exists
   if (price) {
     itemData.priceHistory = [{
       price: price,
@@ -303,7 +295,6 @@ function deleteItem(id) {
 // Toggle check with purchase confirmation
 function toggleCheck(id, checked) {
   if (checked) {
-    // Confirmation when checking
     const confirmed = confirm('Mark this item as purchased?');
     
     if (confirmed) {
@@ -313,11 +304,9 @@ function toggleCheck(id, checked) {
         claimedDate: Date.now()
       });
     } else {
-      // Uncheck the box if they cancel
       event.target.checked = false;
     }
   } else {
-    // Unchecking
     const isAdmin = sessionStorage.getItem('isAdmin') === 'true';
     if (isAdmin) {
       window.dbUpdate(window.dbRef(window.db, 'wishlist/' + id), {
@@ -341,7 +330,6 @@ function openInfo(id) {
   
   let infoHTML = item.info ? `<p>${escapeHtml(item.info)}</p>` : '<p>No info available.</p>';
   
-  // Add price history if available
   if (item.priceHistory && item.priceHistory.length > 0) {
     infoHTML += '<div class="price-history">';
     infoHTML += '<h4 style="color: var(--accent); margin: 15px 0 10px 0;">💰 Price History</h4>';
@@ -430,7 +418,6 @@ function deleteComment(itemId, commentId) {
   
   if (confirm('Delete this comment?')) {
     window.dbRemove(window.dbRef(window.db, 'wishlist/' + itemId + '/comments/' + commentId));
-    // Refresh the comments modal
     setTimeout(() => openComments(itemId), 200);
   }
 }
@@ -502,7 +489,6 @@ function applyFilters() {
   items.forEach(item => {
     let showItem = true;
     
-    // Price filter
     if (currentPriceFilter !== 'all') {
       const priceText = item.dataset.price;
       const priceNum = parseFloat(priceText.replace(/[^0-9.]/g, ''));
@@ -512,7 +498,6 @@ function applyFilters() {
       if (currentPriceFilter === 'over100' && priceNum <= 100) showItem = false;
     }
     
-    // Tag filter
     if (currentTagFilter !== 'all') {
       const tag = item.dataset.tag;
       if (tag !== currentTagFilter) showItem = false;

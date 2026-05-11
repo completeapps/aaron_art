@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Wishlist</title>
+  <title>Art</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -128,10 +128,10 @@
     </div>
   </header>
 
-  <!-- Wishlist Section -->
-  <main class="wishlist-section">
+  <!-- Art Section -->
+  <main class="Art-section">
     <div class="section-header">
-      <h2>Wishlist</h2>
+      <h2>Art</h2>
       <button class="add-btn admin-only" onclick="toggleAddForm()" style="display:none;">+ Add Item</button>
     </div>
 
@@ -170,8 +170,8 @@
       </div>
     </div>
 
-    <!-- Wishlist Grid -->
-    <div class="wishlist-grid" id="wishlistGrid"></div>
+    <!-- Art Grid -->
+    <div class="Art-grid" id="ArtGrid"></div>
   </main>
 
   <!-- Footer -->
@@ -213,7 +213,7 @@
 
     // Build tag filters and dropdowns from tags.js
     window.buildTagUI = function() {
-      const tags = window.WISHLIST_TAGS || [];
+      const tags = window.Art_TAGS || [];
       
       // Build tag filter buttons
       const tagFilterGroup = document.getElementById('tagFilterGroup');
@@ -288,14 +288,14 @@
       }
     });
 
-    // Load wishlist items
-    const wishlistRef = ref(db, 'wishlist');
-    onValue(wishlistRef, (snapshot) => {
-      const grid = document.getElementById('wishlistGrid');
+    // Load Art items
+    const ArtRef = ref(db, 'Art');
+    onValue(ArtRef, (snapshot) => {
+      const grid = document.getElementById('ArtGrid');
       grid.innerHTML = '';
       
       const data = snapshot.val();
-      window.wishlistData = data || {};
+      window.ArtData = data || {};
       
       if (data) {
         Object.keys(data).forEach(key => {
@@ -306,7 +306,7 @@
     });
 
     window.renderItem = function(id, item) {
-      const grid = document.getElementById('wishlistGrid');
+      const grid = document.getElementById('ArtGrid');
       const isAdmin = sessionStorage.getItem('isAdmin') === 'true';
       
       // Hide private items from non-admins
@@ -315,7 +315,7 @@
       }
       
       const itemDiv = document.createElement('div');
-      itemDiv.className = 'wishlist-item';
+      itemDiv.className = 'Art-item';
       itemDiv.dataset.id = id;
       itemDiv.dataset.price = item.price || '';
       itemDiv.dataset.tag = item.tag || '';
@@ -340,7 +340,7 @@
       
       // Tags
       if (hasTag) {
-        const tags = window.WISHLIST_TAGS || [];
+        const tags = window.Art_TAGS || [];
         const tagObj = tags.find(t => t.name === item.tag);
         const emoji = tagObj ? tagObj.emoji : '';
         html += `<div class="item-tags"><span class="item-tag">${emoji} ${escapeHtml(item.tag)}</span></div>`;

@@ -1,6 +1,27 @@
 // Admin password
 const ADMIN_PASSWORD = "0000";
 
+// Switch between HOME and PORTFOLIO
+function showSection(section) {
+  const home = document.getElementById('homeSection');
+  const portfolio = document.getElementById('portfolioSection');
+  const navLinks = document.querySelectorAll('.nav-link');
+
+  if (section === 'home') {
+    home.style.display = '';
+    portfolio.style.display = 'none';
+  } else if (section === 'portfolio') {
+    home.style.display = 'none';
+    portfolio.style.display = '';
+  }
+
+  navLinks.forEach(btn => btn.classList.remove('active'));
+  const activeBtn = Array.from(navLinks).find(
+    btn => btn.textContent.trim() === section.toUpperCase()
+  );
+  if (activeBtn) activeBtn.classList.add('active');
+}
+
 window.addEventListener('DOMContentLoaded', () => {
   updateAdminUI();
 });
@@ -26,7 +47,6 @@ function loginAdmin() {
     closeAdminModal();
     updateAdminUI();
     alert('Admin mode enabled');
-    // Reload items to show private ones
     if (window.db) {
       const wishlistRef = window.dbRef(window.db, 'wishlist');
       window.dbOnValue = window.dbOnValue || ((ref, callback) => {

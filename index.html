@@ -217,7 +217,7 @@
       
       // Build tag filter buttons
       const tagFilterGroup = document.getElementById('tagFilterGroup');
-      tagFilterGroup.innerHTML = '<button class="filter-btn active" onclick="filterByTag(\\'all\\')">All Tags</button>';
+      tagFilterGroup.innerHTML = '<button class="filter-btn active" onclick="filterByTag(\'all\')">All Tags</button>';
       tags.forEach(tag => {
         const btn = document.createElement('button');
         btn.className = 'filter-btn';
